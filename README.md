@@ -11,6 +11,11 @@ python.exe -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
+## Get MOEX bonds data
+```
+python main.py
+```
+
 ## Jupiter Notebook
 [Juiter](http://jupyter.org/install)
 To run the notebook:
