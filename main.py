@@ -5,10 +5,13 @@ import math
 import os
 from collections import OrderedDict
 import csv
+import argparse
+# from datetime import datetime
 
 
-URL_BONDS='https://iss.moex.com/iss/history/engines/stock/markets/bonds/securities.xml' \
-          '?limit=100&date={date}&start={start}'
+URL_BONDS = 'https://iss.moex.com/iss/history' \
+            '/engines/stock/markets/bonds/securities.xml' \
+            '?limit=100&date={date}&start={start}'
 
 
 def download_bonds_xml(date, start=0):
@@ -19,7 +22,8 @@ def download_bonds_xml(date, start=0):
     r = requests.get(url)
 
     os.makedirs('./downloads', exist_ok=True)
-    with open('./downloads/stock_bonds_{}_{}.xml'.format(date, start), 'w') as f:
+    with open('./downloads/stock_bonds_{}_{}.xml'.format(date, start),
+              'w') as f:
         f.write(r.text)
 
     return r.text
@@ -27,8 +31,9 @@ def download_bonds_xml(date, start=0):
 
 def save_bonds_to_csv(bonds, date, append=True, header=None):
     os.makedirs('./csv', exist_ok=True)
-    filepath = './csv/stock_bonds_{}.csv'.format(date);
-    csvfile = open(filepath, 'a' if append else 'w', newline='', encoding='utf-8')
+    filepath = './csv/stock_bonds_{}.csv'.format(date)
+    csvfile = open(filepath, 'a' if append else 'w',
+                   newline='', encoding='utf-8')
     writer = csv.writer(csvfile)
     if header:
         writer.writerow(header.keys())
@@ -62,6 +67,7 @@ def get_bond_attributes(xml):
 
     return attrs
 
+
 def get_bonds(xml, bond_attrs):
     bonds = []
     for row in xml.findall("data[@id='history']/rows/row"):
@@ -73,24 +79,49 @@ def get_bonds(xml, bond_attrs):
     return bonds
 
 
-def main():
-    xml_text = download_bonds_xml('2024-08-23')
+def configure_logging():
+    logging.basicConfig(
+        format='%(levelname)-7s:%(asctime)s: %(message)s',
+        level=logging.DEBUG,
+        handlers=[
+            logging.FileHandler('moex.log'),
+            logging.StreamHandler()])
+    logging.getLogger('urllib3').setLevel(logging.WARNING)
+
+
+def parse_args():
+    arg_parser = argparse.ArgumentParser(
+        description='Загрузка данных об облигациях с сайта Московской биржи')
+    arg_parser.add_argument(
+        '--date',
+        required=True,
+        help='Дата торгов в формате YYYY-MM-DD',
+    )
+    return arg_parser.parse_args()
+
+
+def main(load_date):
+    xml_text = download_bonds_xml(load_date)
     xml_data = ElementTree.fromstring(xml_text)
 
     attrs = get_bond_attributes(xml_data)
     logging.debug(attrs)
 
     bonds = get_bonds(xml_data, attrs)
-    save_bonds_to_csv(bonds, '2024-08-23', append=False, header=attrs)
+    save_bonds_to_csv(bonds, load_date, append=False, header=attrs)
 
     cursor = get_cursor(xml_data)
     logging.debug(cursor)
-    
+
     for i in range(1, math.ceil(cursor['total']/cursor['pagesize'])):
-        xml_text = download_bonds_xml('2024-08-23', int(i*cursor['pagesize']))
+        xml_text = download_bonds_xml(load_date, int(i*cursor['pagesize']))
+        xml_data = ElementTree.fromstring(xml_text)
         bonds = get_bonds(xml_data, attrs)
-        save_bonds_to_csv(bonds,'2024-08-23')
+        save_bonds_to_csv(bonds, load_date)
 
 
 if __name__ == "__main__":
-    main()
+    configure_logging()
+    args = parse_args()
+    main(args.date)
+    # main('2024-08-22')
