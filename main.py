@@ -11,7 +11,7 @@ def configure_logging():
         handlers=[
             logging.FileHandler('moex.log'),
             logging.StreamHandler()])
-    logging.getLogger('urllib3').setLevel(logging.WARNING)
+    # logging.getLogger('urllib3').setLevel(logging.WARNING)
 
 
 def parse_args():
@@ -21,12 +21,6 @@ def parse_args():
         '--date',
         required=True,
         help='Дата торгов в формате YYYY-MM-DD',
-    )
-    arg_parser.add_argument(
-        '-u', '--unskilled',
-        help='Убрать облигации, '
-             'которые доступны только квалифицированным инвесторам',
-        action='store_true'  # on/off flag
     )
     return arg_parser.parse_args()
 
