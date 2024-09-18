@@ -2,6 +2,7 @@ import logging
 import argparse
 
 from bonds import download_bonds
+from shares import download_shares
 
 
 def configure_logging():
@@ -16,7 +17,8 @@ def configure_logging():
 
 def parse_args():
     arg_parser = argparse.ArgumentParser(
-        description='Загрузка данных об облигациях с сайта Московской биржи')
+        description='Загрузка данных об облигациях и акциях '
+                    'с сайта Московской биржи')
     arg_parser.add_argument(
         '--date',
         required=True,
@@ -28,8 +30,13 @@ def parse_args():
 def main(load_date):
     logging.info('Начинается загрузка данных о торгах облигациями'
                  ' на {}'.format(load_date))
-    csv_vile_name = download_bonds(load_date)
-    logging.info('Файл "{}" сформирован.'.format(csv_vile_name))
+    csv_file_name = download_bonds(load_date)
+    logging.info('Файл "{}" сформирован.'.format(csv_file_name))
+
+    logging.info('Начинается загрузка данных о торгах акциями'
+                 ' на {}'.format(load_date))
+    csv_file_name = download_shares(load_date)
+    logging.info('Файл "{}" сформирован.'.format(csv_file_name))
 
 
 if __name__ == "__main__":
