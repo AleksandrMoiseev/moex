@@ -1,5 +1,5 @@
 # Moscow Exchange
-Загрузка данных об облигациях с сайта Московской биржи.
+Загрузка данных об облигациях и акциях с сайта Московской биржи.
 * [Programming interface to the ISS](https://www.moex.com/a2920)
 * [Программный интерфейс к ИСС](https://www.moex.com/a2193)
 
@@ -11,9 +11,9 @@ python.exe -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-## Get MOEX bonds data
+## Get MOEX bonds and shares data
 ```
-python main.py --date 2024-08-22
+python main.py --date 2024-09-17
 ```
 
 ## Jupiter Notebook
