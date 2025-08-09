@@ -27,7 +27,7 @@ def download_bonds_xml(date, start=0):
     r = requests.get(url)
     os.makedirs('./downloads', exist_ok=True)
     with open('./downloads/stock_bonds_{}_{}.xml'.format(date, start),
-              'w') as f:
+              'w', encoding='utf-8') as f:
         f.write(r.text)
     return r.text
 

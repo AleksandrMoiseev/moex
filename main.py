@@ -10,7 +10,7 @@ def configure_logging():
         format='%(levelname)-7s:%(asctime)s: %(message)s',
         level=logging.INFO,  # DEBUG
         handlers=[
-            logging.FileHandler('moex.log'),
+            logging.FileHandler('moex.log', 'w', 'utf-8'),
             logging.StreamHandler()])
     # logging.getLogger('urllib3').setLevel(logging.WARNING)
 
@@ -32,7 +32,7 @@ def main(load_date):
                  ' на {}'.format(load_date))
     csv_file_name = download_bonds(load_date)
     logging.info('Файл "{}" сформирован.'.format(csv_file_name))
-
+    
     logging.info('Начинается загрузка данных о торгах акциями'
                  ' на {}'.format(load_date))
     csv_file_name = download_shares(load_date)
@@ -43,4 +43,4 @@ if __name__ == "__main__":
     configure_logging()
     args = parse_args()
     main(args.date)
-    # main('2024-08-27')
+

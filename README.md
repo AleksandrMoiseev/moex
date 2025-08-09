@@ -5,15 +5,16 @@
 
 ## Environment setup
 ```
-python -m venv .env
-.\.env\Scripts\Activate.ps1
+python -m venv venv
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
+.\venv\Scripts\Activate.ps1
 python.exe -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
 ## Get MOEX bonds and shares data
 ```
-python main.py --date 2024-09-17
+python main.py --date 2025-08-07
 ```
 
 ## Jupiter Notebook
